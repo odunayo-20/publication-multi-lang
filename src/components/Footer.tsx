@@ -47,7 +47,7 @@ export function Footer({ locale, siteName }: FooterProps) {
             <h4 className="acad-footer-heading">Discover Research</h4>
             <ul className="acad-footer-links">
               <li>
-                <Link href={`/${locale}/publications?type=journal-article`}>Academic Journals</Link>
+                <Link href={`/${locale}/journals`}>Academic Journals</Link>
               </li>
               <li>
                 <Link href={`/${locale}/publications`}>All Articles & Papers</Link>

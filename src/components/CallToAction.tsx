@@ -54,4 +54,3 @@ export function CallToAction({ locale }: CallToActionProps) {
     </section>
   )
 }
-

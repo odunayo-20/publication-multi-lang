@@ -65,7 +65,7 @@ export function JournalSpotlight({ locale }: JournalSpotlightProps) {
             </h2>
             <p className="acad-section-subtitle">{t.portal.journals.subtitle}</p>
           </div>
-          <Link href={`/${locale}/publications?type=journal-article`} className="acad-view-all-link">
+          <Link href={`/${locale}/journals`} className="acad-view-all-link">
             <span>{t.portal.journals.viewAll}</span>
           </Link>
         </div>

@@ -1,0 +1,271 @@
+export type AcademicJournal = {
+  id: string
+  initials: string
+  name: string
+  slug: string
+  categoryId: string
+  categoryName: string
+  scope: string
+  issn: string
+  eIssn: string
+  citeScore: number
+  acceptanceRate: string
+  reviewTime: string
+  articlesCount: number
+  badgeColor: string
+  isFeatured?: boolean
+  indexing: string[]
+}
+
+export type JournalCategory = {
+  id: string
+  name: string
+  count: number
+}
+
+export const journalCategories: JournalCategory[] = [
+  { id: 'all', name: 'All Categories', count: 320 },
+  { id: 'cs', name: 'Computer Science', count: 48 },
+  { id: 'edu', name: 'Education', count: 42 },
+  { id: 'health', name: 'Health Sciences', count: 37 },
+  { id: 'eng', name: 'Engineering', count: 36 },
+  { id: 'social', name: 'Social Sciences', count: 28 },
+  { id: 'biz', name: 'Business & Management', count: 24 },
+  { id: 'natural', name: 'Natural Sciences', count: 22 },
+  { id: 'arts', name: 'Arts & Humanities', count: 19 },
+  { id: 'law', name: 'Law', count: 12 },
+  { id: 'math', name: 'Mathematics', count: 10 },
+  { id: 'other', name: 'Other', count: 25 },
+]
+
+export const academicJournals: AcademicJournal[] = [
+  {
+    id: 'ict',
+    initials: 'ICT',
+    name: 'International Journal of Computer Science and Applications',
+    slug: 'international-journal-computer-science-applications',
+    categoryId: 'cs',
+    categoryName: 'Computer Science',
+    scope:
+      'Publishes high-quality research in computer science, software engineering, artificial intelligence, distributed systems, and ICT applications.',
+    issn: '2582-4120',
+    eIssn: '2582-4139',
+    citeScore: 4.8,
+    acceptanceRate: '21%',
+    reviewTime: '21 days',
+    articlesCount: 42,
+    badgeColor: 'badge-blue',
+    isFeatured: true,
+    indexing: ['Crossref', 'Scopus', 'DOAJ', 'Google Scholar'],
+  },
+  {
+    id: 'je',
+    initials: 'JE',
+    name: 'Journal of Education and Practice',
+    slug: 'journal-education-and-practice',
+    categoryId: 'edu',
+    categoryName: 'Education',
+    scope:
+      'Focuses on innovative teaching methods, educational policy and administration, learning technologies, and cognitive pedagogical development.',
+    issn: '2222-1735',
+    eIssn: '2222-288X',
+    citeScore: 3.6,
+    acceptanceRate: '28%',
+    reviewTime: '24 days',
+    articlesCount: 36,
+    badgeColor: 'badge-navy',
+    isFeatured: true,
+    indexing: ['Crossref', 'ERIC', 'DOAJ', 'Google Scholar'],
+  },
+  {
+    id: 'jh',
+    initials: 'JH',
+    name: 'Journal of Health and Medical Sciences',
+    slug: 'journal-health-medical-sciences',
+    categoryId: 'health',
+    categoryName: 'Health Sciences',
+    scope:
+      'Covers fundamental and translational research in clinical medicine, epidemiology, public health, oncology, and health informatics.',
+    issn: '2654-5780',
+    eIssn: '2654-5799',
+    citeScore: 5.2,
+    acceptanceRate: '19%',
+    reviewTime: '18 days',
+    articlesCount: 28,
+    badgeColor: 'badge-teal',
+    isFeatured: true,
+    indexing: ['Crossref', 'PubMed Central', 'Scopus', 'DOAJ'],
+  },
+  {
+    id: 'ie',
+    initials: 'IE',
+    name: 'International Journal of Engineering Research',
+    slug: 'international-journal-engineering-research',
+    categoryId: 'eng',
+    categoryName: 'Engineering',
+    scope:
+      'Publishes peer-reviewed research in mechanical, electrical, civil, geotechnical, computational, and industrial engineering systems.',
+    issn: '2319-6890',
+    eIssn: '2347-5013',
+    citeScore: 4.1,
+    acceptanceRate: '24%',
+    reviewTime: '22 days',
+    articlesCount: 31,
+    badgeColor: 'badge-cyan',
+    isFeatured: true,
+    indexing: ['Crossref', 'Scopus', 'Inspec', 'Google Scholar'],
+  },
+  {
+    id: 'js',
+    initials: 'JS',
+    name: 'Journal of Social Sciences and Humanities',
+    slug: 'journal-social-sciences-humanities',
+    categoryId: 'social',
+    categoryName: 'Social Sciences',
+    scope:
+      'Explores human behaviour, cultural evolution, public policy, sociology, community development, and international geopolitical studies.',
+    issn: '2710-2122',
+    eIssn: '2710-2130',
+    citeScore: 3.2,
+    acceptanceRate: '31%',
+    reviewTime: '26 days',
+    articlesCount: 25,
+    badgeColor: 'badge-indigo',
+    isFeatured: true,
+    indexing: ['Crossref', 'Web of Science', 'DOAJ', 'Google Scholar'],
+  },
+  {
+    id: 'hess',
+    initials: 'HE',
+    name: 'Hydrology and Earth System Sciences',
+    slug: 'hydrology-earth-system-sciences',
+    categoryId: 'natural',
+    categoryName: 'Natural Sciences',
+    scope:
+      'International open-access forum dedicated to the study of water resources, atmospheric hydrology, flood early-warning, and environmental extremes.',
+    issn: '1027-5606',
+    eIssn: '1607-7938',
+    citeScore: 5.9,
+    acceptanceRate: '18%',
+    reviewTime: '20 days',
+    articlesCount: 34,
+    badgeColor: 'badge-cyan',
+    isFeatured: true,
+    indexing: ['Crossref', 'Scopus', 'DOAJ', 'Web of Science'],
+  },
+  {
+    id: 'bmi',
+    initials: 'BM',
+    name: 'Journal of Business, Management and Innovation',
+    slug: 'journal-business-management-innovation',
+    categoryId: 'biz',
+    categoryName: 'Business & Management',
+    scope:
+      'Dedicated to corporate governance, entrepreneurial finance, sustainable supply chains, digital marketing, and organizational psychology.',
+    issn: '2831-9014',
+    eIssn: '2831-9022',
+    citeScore: 3.7,
+    acceptanceRate: '25%',
+    reviewTime: '25 days',
+    articlesCount: 24,
+    badgeColor: 'badge-amber',
+    isFeatured: false,
+    indexing: ['Crossref', 'EBSCO', 'DOAJ', 'Google Scholar'],
+  },
+  {
+    id: 'nps',
+    initials: 'NS',
+    name: 'Journal of Natural and Physical Sciences',
+    slug: 'journal-natural-physical-sciences',
+    categoryId: 'natural',
+    categoryName: 'Natural Sciences',
+    scope:
+      'Publishes original scientific inquiries in applied chemistry, quantum materials, thermodynamics, planetary science, and experimental physics.',
+    issn: '2415-6698',
+    eIssn: '2415-6701',
+    citeScore: 4.4,
+    acceptanceRate: '22%',
+    reviewTime: '23 days',
+    articlesCount: 22,
+    badgeColor: 'badge-teal',
+    isFeatured: false,
+    indexing: ['Crossref', 'Scopus', 'DOAJ', 'CAS'],
+  },
+  {
+    id: 'ah',
+    initials: 'AH',
+    name: 'Review of Arts, Culture and Humanities',
+    slug: 'review-arts-culture-humanities',
+    categoryId: 'arts',
+    categoryName: 'Arts & Humanities',
+    scope:
+      'Provides critical discourse in contemporary philosophy, comparative literature, architectural history, visual semiotics, and heritage preservation.',
+    issn: '2520-5145',
+    eIssn: '2520-5153',
+    citeScore: 2.9,
+    acceptanceRate: '33%',
+    reviewTime: '28 days',
+    articlesCount: 19,
+    badgeColor: 'badge-indigo',
+    isFeatured: false,
+    indexing: ['Crossref', 'DOAJ', 'Google Scholar'],
+  },
+  {
+    id: 'jilp',
+    initials: 'LW',
+    name: 'Journal of International Law and Policy',
+    slug: 'journal-international-law-policy',
+    categoryId: 'law',
+    categoryName: 'Law',
+    scope:
+      'Scholarly examination of constitutional jurisprudence, international human rights law, environmental governance, and commercial arbitration treaties.',
+    issn: '2789-3321',
+    eIssn: '2789-333X',
+    citeScore: 3.4,
+    acceptanceRate: '23%',
+    reviewTime: '30 days',
+    articlesCount: 12,
+    badgeColor: 'badge-navy',
+    isFeatured: false,
+    indexing: ['Crossref', 'HeinOnline', 'DOAJ', 'Google Scholar'],
+  },
+  {
+    id: 'ams',
+    initials: 'MS',
+    name: 'Annals of Applied Mathematics and Statistics',
+    slug: 'annals-applied-mathematics-statistics',
+    categoryId: 'math',
+    categoryName: 'Mathematics',
+    scope:
+      'Rigorous research in statistical inference, stochastic modeling, computational topology, high-dimensional probability, and numerical analysis.',
+    issn: '2195-268X',
+    eIssn: '2195-2698',
+    citeScore: 4.7,
+    acceptanceRate: '17%',
+    reviewTime: '25 days',
+    articlesCount: 10,
+    badgeColor: 'badge-blue',
+    isFeatured: false,
+    indexing: ['Crossref', 'MathSciNet', 'Scopus', 'DOAJ'],
+  },
+  {
+    id: 'isms',
+    initials: 'IS',
+    name: 'Interdisciplinary Studies in Modern Science',
+    slug: 'interdisciplinary-studies-modern-science',
+    categoryId: 'other',
+    categoryName: 'Other',
+    scope:
+      'Cross-cutting investigations uniting digital ethics, bio-computation, environmental sustainability, and technological policy in society.',
+    issn: '2617-4588',
+    eIssn: '2617-4596',
+    citeScore: 3.9,
+    acceptanceRate: '26%',
+    reviewTime: '22 days',
+    articlesCount: 25,
+    badgeColor: 'badge-emerald',
+    isFeatured: false,
+    indexing: ['Crossref', 'Scopus', 'DOAJ', 'Google Scholar'],
+  },
+]
+

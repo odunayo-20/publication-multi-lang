@@ -39,7 +39,7 @@ export function Navbar({ locale, siteName }: NavbarProps) {
           <Link href={`/${locale}`} className="acad-nav-link">
             {t.nav.home}
           </Link>
-          <Link href={`/${locale}/publications?type=journal-article`} className="acad-nav-link">
+          <Link href={`/${locale}/journals`} className="acad-nav-link">
             {t.nav.journals}
           </Link>
           <Link href={`/${locale}/publications`} className="acad-nav-link">
@@ -117,7 +117,7 @@ export function Navbar({ locale, siteName }: NavbarProps) {
             <Link href={`/${locale}`} onClick={() => setMobileOpen(false)}>
               {t.nav.home}
             </Link>
-            <Link href={`/${locale}/publications?type=journal-article`} onClick={() => setMobileOpen(false)}>
+            <Link href={`/${locale}/journals`} onClick={() => setMobileOpen(false)}>
               {t.nav.journals}
             </Link>
             <Link href={`/${locale}/publications`} onClick={() => setMobileOpen(false)}>

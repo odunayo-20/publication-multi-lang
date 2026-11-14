@@ -169,4 +169,3 @@ export function HeroSearch({ locale, stats }: HeroSearchProps) {
     </section>
   )
 }
-
