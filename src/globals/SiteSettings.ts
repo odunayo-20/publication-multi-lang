@@ -22,6 +22,24 @@ export const SiteSettings: GlobalConfig = {
     { name: 'summary', type: 'textarea', localized: true, maxLength: 300 },
     { name: 'portrait', type: 'upload', relationTo: 'media' },
     {
+      name: 'researchFocus',
+      type: 'array',
+      maxRows: 6,
+      admin: {
+        description: 'Three to five research themes in plain language, shown on the home page.',
+      },
+      fields: [
+        { name: 'title', type: 'text', required: true, localized: true, maxLength: 60 },
+        {
+          name: 'description',
+          type: 'textarea',
+          required: true,
+          localized: true,
+          maxLength: 240,
+        },
+      ],
+    },
+    {
       name: 'contactEmail',
       type: 'email',
       admin: { description: 'Shown on the Contact page, obfuscated against spam.' },

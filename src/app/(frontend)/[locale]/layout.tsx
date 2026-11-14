@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
 import { Inter, JetBrains_Mono, Source_Serif_4 } from 'next/font/google'
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import React from 'react'
 
-import { LanguageSwitch } from '@/components/LanguageSwitch'
+import { Footer } from '@/components/Footer'
+import { Navbar } from '@/components/Navbar'
 import { isLocale, locales, type Locale } from '@/i18n/config'
 import { messages } from '@/i18n/messages'
 import { fallbackSiteName, getSiteSettings, siteUrl } from '@/lib/site'
@@ -56,18 +56,11 @@ export default async function LocaleLayout({ children, params }: Args) {
         <a href="#content" className="skip-link">
           {t.skipToContent}
         </a>
-        <header className="site-header">
-          <Link href={`/${locale}`} className="brand">
-            {settings?.name || fallbackSiteName}
-          </Link>
-          <nav aria-label="Main" className="main-nav">
-            <Link href={`/${locale}/publications`}>{t.nav.publications}</Link>
-          </nav>
-          <LanguageSwitch locale={locale} label={t.language} />
-        </header>
-        <main id="content" className="container">
+        <Navbar locale={locale as Locale} siteName={settings?.name} />
+        <main id="content" className="acad-main-content">
           {children}
         </main>
+        <Footer locale={locale as Locale} siteName={settings?.name} />
       </body>
     </html>
   )

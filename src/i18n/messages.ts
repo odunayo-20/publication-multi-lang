@@ -3,8 +3,83 @@ import type { Locale } from './config'
 const en = {
   skipToContent: 'Skip to content',
   language: 'Language',
-  nav: { publications: 'Publications' },
-  home: { latest: 'Latest', noArticles: 'No articles yet.' },
+  nav: {
+    home: 'Home',
+    journals: 'Journals',
+    articles: 'Articles',
+    authors: 'Authors',
+    about: 'About',
+    publications: 'Publications',
+    signIn: 'Sign In',
+    submitPaper: 'Submit Paper',
+  },
+  portal: {
+    badge: 'International Scholarly Publishing Platform',
+    titlePrefix: 'Academic Knowledge',
+    titleHighlight: 'for a Brighter Future',
+    subtitle:
+      'Discover, read, and publish high-impact, peer-reviewed research and academic works from trusted scholars worldwide.',
+    searchPlaceholder: 'Search for articles, journals, authors, or keywords...',
+    searchButton: 'Search',
+    trending: 'Trending topics:',
+    stats: {
+      articles: 'Total Articles',
+      journals: 'Journals',
+      authors: 'Registered Authors',
+      institutions: 'Institutions',
+    },
+    featured: {
+      title: 'Featured Publications',
+      subtitle: 'Explore recent peer-reviewed articles and breakthrough research',
+      viewAll: 'View all →',
+      readAbstract: 'Abstract',
+      downloadPdf: 'Download PDF',
+      cite: 'Cite',
+    },
+    journals: {
+      title: 'Featured Journals',
+      subtitle: 'Explore our collection of academic journals across various disciplines',
+      viewAll: 'View all →',
+      articlesCount: 'articles',
+      viewJournal: 'View Journal',
+    },
+    trust: {
+      openAccess: {
+        title: 'Open Access',
+        desc: 'Free, unrestricted access to quality research and scholarly works worldwide.',
+      },
+      trustedSources: {
+        title: 'Trusted Sources',
+        desc: 'Rigorous peer-reviewed publications from reputable institutions and verified experts.',
+      },
+      globalReach: {
+        title: 'Global Reach',
+        desc: 'Connecting researchers across the world with permanent Crossref DOIs.',
+      },
+    },
+    cta: {
+      title: 'Publish Your Research With AcadPress',
+      subtitle:
+        'Join thousands of scholars worldwide. Rapid double-blind peer review with global dissemination.',
+      submit: 'Submit Manuscript',
+      guidelines: 'Author Guidelines',
+    },
+  },
+  home: {
+    focus: 'What I work on',
+    selected: 'Selected publications',
+    recent: 'Recent publications',
+    allPublications: 'All publications',
+    latestWriting: 'Latest writing',
+  },
+  profiles: {
+    scholar: 'Google Scholar',
+    orcid: 'ORCID',
+    researchgate: 'ResearchGate',
+    institute: 'Institute page',
+    linkedin: 'LinkedIn',
+    other: 'Website',
+  },
   publications: {
     title: 'Publications',
     intro: 'Peer-reviewed articles, conference contributions and talks.',
@@ -43,8 +118,83 @@ type Messages = typeof en
 const hr: Messages = {
   skipToContent: 'Preskoči na sadržaj',
   language: 'Jezik',
-  nav: { publications: 'Publikacije' },
-  home: { latest: 'Najnovije', noArticles: 'Još nema članaka.' },
+  nav: {
+    home: 'Naslovnica',
+    journals: 'Časopisi',
+    articles: 'Članci',
+    authors: 'Autori',
+    about: 'O nama',
+    publications: 'Publikacije',
+    signIn: 'Prijava',
+    submitPaper: 'Predaj rad',
+  },
+  portal: {
+    badge: 'Međunarodna platforma za znanstveno izdavaštvo',
+    titlePrefix: 'Znanstveno znanje',
+    titleHighlight: 'za svjetliju budućnost',
+    subtitle:
+      'Istražite, čitajte i objavljujte recenzirane znanstvene radove i članke priznatih znanstvenika iz cijeloga svijeta.',
+    searchPlaceholder: 'Pretražite članke, časopise, autore ili ključne riječi...',
+    searchButton: 'Traži',
+    trending: 'Popularne teme:',
+    stats: {
+      articles: 'Ukupno članaka',
+      journals: 'Časopisa',
+      authors: 'Registriranih autora',
+      institutions: 'Institucija',
+    },
+    featured: {
+      title: 'Odabrane publikacije',
+      subtitle: 'Istražite recentne recenzirane radove i znanstvena otkrića',
+      viewAll: 'Prikaži sve →',
+      readAbstract: 'Sažetak',
+      downloadPdf: 'Preuzmi PDF',
+      cite: 'Citiraj',
+    },
+    journals: {
+      title: 'Istaknuti časopisi',
+      subtitle: 'Pregledajte našu zbirku znanstvenih časopisa iz različitih disciplina',
+      viewAll: 'Prikaži sve →',
+      articlesCount: 'članaka',
+      viewJournal: 'Otvori časopis',
+    },
+    trust: {
+      openAccess: {
+        title: 'Otvoreni pristup',
+        desc: 'Slobodan i neograničen pristup kvalitetnim znanstvenim radovima diljem svijeta.',
+      },
+      trustedSources: {
+        title: 'Provjereni izvori',
+        desc: 'Recenzirane publikacije renomiranih institucija i stručnjaka.',
+      },
+      globalReach: {
+        title: 'Globalni doseg',
+        desc: 'Povezivanje znanstvenika širom svijeta uz trajne Crossref DOI identifikatore.',
+      },
+    },
+    cta: {
+      title: 'Objavite svoj rad u AcadPressu',
+      subtitle:
+        'Pridružite se tisućama znanstvenika. Brza dvostruko slijepa recenzija uz globalnu vidljivost.',
+      submit: 'Predaj rukopis',
+      guidelines: 'Upute za autore',
+    },
+  },
+  home: {
+    focus: 'Čime se bavim',
+    selected: 'Odabrane publikacije',
+    recent: 'Nedavne publikacije',
+    allPublications: 'Sve publikacije',
+    latestWriting: 'Najnoviji tekstovi',
+  },
+  profiles: {
+    scholar: 'Google Scholar',
+    orcid: 'ORCID',
+    researchgate: 'ResearchGate',
+    institute: 'Stranica instituta',
+    linkedin: 'LinkedIn',
+    other: 'Web-stranica',
+  },
   publications: {
     title: 'Publikacije',
     intro: 'Recenzirani radovi, konferencijska izlaganja i predavanja.',

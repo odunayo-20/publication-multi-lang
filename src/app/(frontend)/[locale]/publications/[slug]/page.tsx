@@ -10,6 +10,7 @@ import { locales, type Locale } from '@/i18n/config'
 import { messages } from '@/i18n/messages'
 import { bibtex, scholarMeta, venueDetail } from '@/lib/citation'
 import { siteUrl } from '@/lib/site'
+import { jsonLdScript } from '@/lib/structured-data'
 
 export const dynamic = 'force-dynamic'
 
@@ -139,11 +140,7 @@ export default async function PublicationPage({ params }: Args) {
         <pre>{bibtex(pub)}</pre>
       </details>
 
-      <script
-        type="application/ld+json"
-        // "<" is escaped so a title cannot close the script tag.
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(jsonLd) }} />
     </article>
   )
 }

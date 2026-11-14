@@ -740,6 +740,16 @@ export interface SiteSetting {
   summary?: string | null;
   portrait?: (number | null) | Media;
   /**
+   * Three to five research themes in plain language, shown on the home page.
+   */
+  researchFocus?:
+    | {
+        title: string;
+        description: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
    * Shown on the Contact page, obfuscated against spam.
    */
   contactEmail?: string | null;
@@ -768,6 +778,13 @@ export interface SiteSettingsSelect<T extends boolean = true> {
   department?: T;
   summary?: T;
   portrait?: T;
+  researchFocus?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        id?: T;
+      };
   contactEmail?: T;
   profiles?:
     | T
