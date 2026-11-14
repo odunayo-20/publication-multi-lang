@@ -67,10 +67,13 @@ export interface Config {
   };
   blocks: {};
   collections: {
+    publications: Publication;
     articles: Article;
+    pages: Page;
     authors: Author;
     tags: Tag;
     media: Media;
+    redirects: Redirect;
     users: User;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -79,10 +82,13 @@ export interface Config {
   };
   collectionsJoins: {};
   collectionsSelect: {
+    publications: PublicationsSelect<false> | PublicationsSelect<true>;
     articles: ArticlesSelect<false> | ArticlesSelect<true>;
+    pages: PagesSelect<false> | PagesSelect<true>;
     authors: AuthorsSelect<false> | AuthorsSelect<true>;
     tags: TagsSelect<false> | TagsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -93,8 +99,12 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: ('false' | 'none' | 'null') | false | null | ('en' | 'hr') | ('en' | 'hr')[];
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    'site-settings': SiteSetting;
+  };
+  globalsSelect: {
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+  };
   locale: 'en' | 'hr';
   widgets: {
     collections: CollectionsWidget;
@@ -125,35 +135,70 @@ export interface UserAuthOperations {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "articles".
+ * via the `definition` "publications".
  */
-export interface Article {
+export interface Publication {
   id: number;
   title: string;
   /**
    * Generated from the title if left empty.
    */
   slug?: string | null;
-  excerpt?: string | null;
-  heroImage?: (number | null) | Media;
-  content?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  authors?: (number | Author)[] | null;
+  type:
+    | 'journal-article'
+    | 'book-chapter'
+    | 'conference-paper'
+    | 'proceedings-paper'
+    | 'bulletin-article'
+    | 'invited-talk'
+    | 'invited-lecture'
+    | 'preprint'
+    | 'other';
+  /**
+   * In the order printed on the paper.
+   */
+  authors: {
+    /**
+     * e.g. Trošelj J.
+     */
+    name: string;
+    isSelf?: boolean | null;
+    id?: string | null;
+  }[];
+  /**
+   * Journal, book or conference name.
+   */
+  venue?: string | null;
+  year: number;
+  volume?: string | null;
+  issue?: string | null;
+  pages?: string | null;
+  /**
+   * Paste a DOI or a doi.org link; it is cleaned automatically.
+   */
+  doi?: string | null;
+  /**
+   * Link to the publisher or repository when there is no DOI.
+   */
+  url?: string | null;
+  abstract?: string | null;
+  /**
+   * Only upload PDFs the publisher allows you to host. Otherwise use the DOI.
+   */
+  pdf?: (number | null) | Media;
   tags?: (number | Tag)[] | null;
-  publishedAt?: string | null;
+  /**
+   * Show under "Selected publications" on the home page.
+   */
+  featured?: boolean | null;
+  /**
+   * Optional. Leave empty to use the title and excerpt.
+   */
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    image?: (number | null) | Media;
+  };
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -164,7 +209,10 @@ export interface Article {
  */
 export interface Media {
   id: number;
-  alt: string;
+  /**
+   * Describe the image for screen readers. Not needed for PDFs.
+   */
+  alt?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -197,6 +245,63 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags".
+ */
+export interface Tag {
+  id: number;
+  name: string;
+  /**
+   * Generated from the title if left empty.
+   */
+  slug?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "articles".
+ */
+export interface Article {
+  id: number;
+  title: string;
+  /**
+   * Generated from the title if left empty.
+   */
+  slug?: string | null;
+  excerpt?: string | null;
+  heroImage?: (number | null) | Media;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  authors?: (number | Author)[] | null;
+  tags?: (number | Tag)[] | null;
+  publishedAt?: string | null;
+  /**
+   * Optional. Leave empty to use the title and excerpt.
+   */
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    image?: (number | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "authors".
  */
 export interface Author {
@@ -213,15 +318,60 @@ export interface Author {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "tags".
+ * via the `definition` "pages".
  */
-export interface Tag {
+export interface Page {
   id: number;
-  name: string;
+  title: string;
   /**
    * Generated from the title if left empty.
    */
   slug?: string | null;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Optional. Leave empty to use the title and excerpt.
+   */
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    image?: (number | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "redirects".
+ */
+export interface Redirect {
+  id: number;
+  /**
+   * Path on this site, e.g. /2022/05/12/flood-paper
+   */
+  from: string;
+  /**
+   * A path (/en/publications) or a full https:// URL.
+   */
+  to: string;
+  /**
+   * Permanent (308) tells search engines to move the old address.
+   */
+  permanent?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -278,8 +428,16 @@ export interface PayloadLockedDocument {
   id: number;
   document?:
     | ({
+        relationTo: 'publications';
+        value: number | Publication;
+      } | null)
+    | ({
         relationTo: 'articles';
         value: number | Article;
+      } | null)
+    | ({
+        relationTo: 'pages';
+        value: number | Page;
       } | null)
     | ({
         relationTo: 'authors';
@@ -292,6 +450,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'redirects';
+        value: number | Redirect;
       } | null)
     | ({
         relationTo: 'users';
@@ -341,6 +503,43 @@ export interface PayloadMigration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "publications_select".
+ */
+export interface PublicationsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  type?: T;
+  authors?:
+    | T
+    | {
+        name?: T;
+        isSelf?: T;
+        id?: T;
+      };
+  venue?: T;
+  year?: T;
+  volume?: T;
+  issue?: T;
+  pages?: T;
+  doi?: T;
+  url?: T;
+  abstract?: T;
+  pdf?: T;
+  tags?: T;
+  featured?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        image?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "articles_select".
  */
 export interface ArticlesSelect<T extends boolean = true> {
@@ -352,6 +551,32 @@ export interface ArticlesSelect<T extends boolean = true> {
   authors?: T;
   tags?: T;
   publishedAt?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        image?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages_select".
+ */
+export interface PagesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  content?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        image?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -422,6 +647,17 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "redirects_select".
+ */
+export interface RedirectsSelect<T extends boolean = true> {
+  from?: T;
+  to?: T;
+  permanent?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
@@ -484,6 +720,66 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: number;
+  /**
+   * Exactly as it appears on publications, with diacritics.
+   */
+  name: string;
+  /**
+   * e.g. Research Associate
+   */
+  role?: string | null;
+  institution?: string | null;
+  department?: string | null;
+  summary?: string | null;
+  portrait?: (number | null) | Media;
+  /**
+   * Shown on the Contact page, obfuscated against spam.
+   */
+  contactEmail?: string | null;
+  /**
+   * Scholar, ORCID and other profile links.
+   */
+  profiles?:
+    | {
+        platform: 'scholar' | 'orcid' | 'researchgate' | 'institute' | 'linkedin' | 'other';
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  defaultShareImage?: (number | null) | Media;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  name?: T;
+  role?: T;
+  institution?: T;
+  department?: T;
+  summary?: T;
+  portrait?: T;
+  contactEmail?: T;
+  profiles?:
+    | T
+    | {
+        platform?: T;
+        url?: T;
+        id?: T;
+      };
+  defaultShareImage?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

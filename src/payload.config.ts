@@ -11,8 +11,12 @@ import sharp from 'sharp'
 import { Articles } from '@/collections/Articles'
 import { Authors } from '@/collections/Authors'
 import { Media } from '@/collections/Media'
+import { Pages } from '@/collections/Pages'
+import { Publications } from '@/collections/Publications'
+import { Redirects } from '@/collections/Redirects'
 import { Tags } from '@/collections/Tags'
 import { Users } from '@/collections/Users'
+import { SiteSettings } from '@/globals/SiteSettings'
 import { defaultLocale, localeLabels, locales } from '@/i18n/config'
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -23,7 +27,8 @@ export default buildConfig({
     user: Users.slug,
     importMap: { baseDir: path.resolve(dirname) },
   },
-  collections: [Articles, Authors, Tags, Media, Users],
+  collections: [Publications, Articles, Pages, Authors, Tags, Media, Redirects, Users],
+  globals: [SiteSettings],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: { outputFile: path.resolve(dirname, 'payload-types.ts') },

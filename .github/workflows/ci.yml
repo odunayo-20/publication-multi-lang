@@ -27,6 +27,7 @@ jobs:
       - run: npm run format:check
       - run: npm run generate:types
       - run: npm run typecheck
+      - run: npm test
       - run: npm run build
       - name: Audit (high severity blocks)
         run: npm audit --audit-level=high

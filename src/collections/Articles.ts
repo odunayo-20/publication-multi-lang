@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { isStaff, publishedOrStaff } from '@/access'
+import { seoField } from '@/fields/seo'
 import { slugField } from '@/fields/slug'
 
 export const Articles: CollectionConfig = {
@@ -34,5 +35,6 @@ export const Articles: CollectionConfig = {
         ],
       },
     },
+    seoField,
   ],
 }
