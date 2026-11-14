@@ -1,7 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { isStaff, publishedOrStaff } from '@/access'
 import { seoField } from '@/fields/seo'
-import { slugField } from '@/fields/slug'
+import { slugField, uniqueSlug } from '@/fields/slug'
 import { isDoi, normalizeDoi } from '@/lib/doi'
 
 export const publicationTypes = [
@@ -31,6 +31,32 @@ export const Publications: CollectionConfig = {
   },
   defaultSort: '-year',
   versions: { drafts: true },
+  hooks: {
+    // A talk and a paper can share a title; keep slugs unique by adding the year, then a number.
+    beforeChange: [
+      async ({ data, originalDoc, req }) => {
+        if (!data.slug) return data
+        const slug = await uniqueSlug(
+          data.slug,
+          async (candidate) => {
+            const { totalDocs } = await req.payload.find({
+              collection: 'publications',
+              where: {
+                slug: { equals: candidate },
+                ...(originalDoc?.id ? { id: { not_equals: originalDoc.id } } : {}),
+              },
+              limit: 1,
+              depth: 0,
+              req,
+            })
+            return totalDocs > 0
+          },
+          data.year ? String(data.year) : undefined,
+        )
+        return { ...data, slug }
+      },
+    ],
+  },
   fields: [
     // Titles and venues are cited as published, so they are not translated.
     { name: 'title', type: 'text', required: true },

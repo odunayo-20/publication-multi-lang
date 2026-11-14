@@ -12,12 +12,12 @@ Status: revised after learning the site is a **professor's academic site** (rese
 
 ## Tone of voice
 
-| Is                                   | Is not                           |
-| ------------------------------------ | -------------------------------- |
-| Precise, measured, plainly written   | Jargon-dense, gatekeeping        |
-| Confident, with evidence             | Promotional, hype                |
-| Warm toward students and the public  | Chatty, slang, emoji             |
-| Honest about uncertainty and limits  | Overclaiming results             |
+| Is                                  | Is not                    |
+| ----------------------------------- | ------------------------- |
+| Precise, measured, plainly written  | Jargon-dense, gatekeeping |
+| Confident, with evidence            | Promotional, hype         |
+| Warm toward students and the public | Chatty, slang, emoji      |
+| Honest about uncertainty and limits | Overclaiming results      |
 
 **Calibration from his existing site:** his current voice is warmer and more personal than this table suggests (tagline "A scientist knows what others have done. An innovator is discovering it by himself."; a Quotes page; playful About). Keep that. Rule: precise about science, personal about everything else. Name form to use: "Joško Trošelj" (with diacritics; the site must also be found by "Josko Troselj" and "Trošelj J."). See `DISCOVERY.md` section 11.
 

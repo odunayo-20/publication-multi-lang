@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { toSlug, truncateSlug } from './slug'
+import { toSlug, truncateSlug, uniqueSlug } from './slug'
 
 describe('toSlug', () => {
   it('removes Croatian diacritics', () => {
@@ -30,5 +30,28 @@ describe('truncateSlug', () => {
 
   it('never ends with a dash', () => {
     expect(truncateSlug('abcde-fghij-klmno', 12)).toBe('abcde-fghij')
+  })
+})
+
+describe('uniqueSlug', () => {
+  const taking =
+    (...taken: string[]) =>
+    async (candidate: string) =>
+      taken.includes(candidate)
+
+  it('keeps a free slug unchanged', async () => {
+    expect(await uniqueSlug('flood', taking())).toBe('flood')
+  })
+
+  it('appends the hint when the slug is taken', async () => {
+    expect(await uniqueSlug('flood', taking('flood'), '2017')).toBe('flood-2017')
+  })
+
+  it('falls back to a counter when the hint is taken too', async () => {
+    expect(await uniqueSlug('flood', taking('flood', 'flood-2017'), '2017')).toBe('flood-2017-2')
+  })
+
+  it('counts upward without a hint', async () => {
+    expect(await uniqueSlug('flood', taking('flood', 'flood-2'))).toBe('flood-3')
   })
 })

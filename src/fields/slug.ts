@@ -33,3 +33,18 @@ export const slugField = (source: string, maxLength = 100): TextField => ({
     ],
   },
 })
+
+/** Returns `base`, or `base-hint`, or `base-hint-2`, ... until `isTaken` says the candidate is free. */
+export const uniqueSlug = async (
+  base: string,
+  isTaken: (candidate: string) => Promise<boolean>,
+  hint?: string,
+): Promise<string> => {
+  if (!(await isTaken(base))) return base
+  const stem = hint ? `${base}-${hint}` : base
+  if (hint && !(await isTaken(stem))) return stem
+  for (let n = 2; ; n++) {
+    const candidate = `${stem}-${n}`
+    if (!(await isTaken(candidate))) return candidate
+  }
+}
