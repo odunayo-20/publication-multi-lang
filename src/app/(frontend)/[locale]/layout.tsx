@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { Inter, JetBrains_Mono, Source_Serif_4 } from 'next/font/google'
 import { notFound } from 'next/navigation'
 import React from 'react'
 
@@ -9,22 +8,6 @@ import { isLocale, locales, type Locale } from '@/i18n/config'
 import { messages } from '@/i18n/messages'
 import { fallbackSiteName, getSiteSettings, siteUrl } from '@/lib/site'
 import './styles.css'
-
-const serif = Source_Serif_4({
-  subsets: ['latin', 'latin-ext'],
-  variable: '--font-serif-loaded',
-  display: 'swap',
-})
-const sans = Inter({
-  subsets: ['latin', 'latin-ext'],
-  variable: '--font-sans-loaded',
-  display: 'swap',
-})
-const mono = JetBrains_Mono({
-  subsets: ['latin', 'latin-ext'],
-  variable: '--font-mono-loaded',
-  display: 'swap',
-})
 
 // Settings and content come from the database on every request for now.
 export const dynamic = 'force-dynamic'
@@ -51,7 +34,7 @@ export default async function LocaleLayout({ children, params }: Args) {
   const settings = await getSiteSettings(locale)
 
   return (
-    <html lang={locale} className={`${serif.variable} ${sans.variable} ${mono.variable}`}>
+    <html lang={locale}>
       <body>
         <a href="#content" className="skip-link">
           {t.skipToContent}

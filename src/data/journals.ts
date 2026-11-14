@@ -268,4 +268,3 @@ export const academicJournals: AcademicJournal[] = [
     indexing: ['Crossref', 'Scopus', 'DOAJ', 'Google Scholar'],
   },
 ]
-

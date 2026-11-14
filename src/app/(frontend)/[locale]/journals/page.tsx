@@ -121,4 +121,3 @@ export default async function JournalsPage({ params, searchParams }: Args) {
     </div>
   )
 }
-

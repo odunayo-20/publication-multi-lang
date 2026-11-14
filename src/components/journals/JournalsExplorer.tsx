@@ -215,9 +215,7 @@ export function JournalsExplorer({
                   <div className="acad-journal-main-info">
                     <div className="acad-journal-headline">
                       <h3 className="acad-journal-title">
-                        <Link href={`/${locale}/publications?q=${encodeURIComponent(journal.name)}`}>
-                          {journal.name}
-                        </Link>
+                        <Link href={`/${locale}/journals/${journal.slug}`}>{journal.name}</Link>
                       </h3>
                       {journal.isFeatured && <span className="acad-featured-tag">Flagship</span>}
                     </div>
@@ -261,10 +259,7 @@ export function JournalsExplorer({
                     </div>
 
                     <div className="acad-journal-btn-group">
-                      <Link
-                        href={`/${locale}/publications?q=${encodeURIComponent(journal.name)}`}
-                        className="acad-btn-view-journal"
-                      >
+                      <Link href={`/${locale}/journals/${journal.slug}`} className="acad-btn-view-journal">
                         <span>{t.journalsPage.viewJournal}</span>
                         <ExternalLink className="w-3.5 h-3.5 ml-1" aria-hidden="true" />
                       </Link>
