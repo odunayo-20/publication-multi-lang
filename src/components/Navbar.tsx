@@ -46,6 +46,9 @@ export function Navbar({ locale, siteName, userName }: NavbarProps) {
             {t.nav.journals}
           </Link>
           <Link href={`/${locale}/publications`} className="acad-nav-link">
+            {t.nav.publications}
+          </Link>
+          <Link href={`/${locale}/articles`} className="acad-nav-link">
             {t.nav.articles}
           </Link>
           <Link href={`/${locale}/authors`} className="acad-nav-link">
@@ -135,6 +138,9 @@ export function Navbar({ locale, siteName, userName }: NavbarProps) {
               {t.nav.journals}
             </Link>
             <Link href={`/${locale}/publications`} onClick={() => setMobileOpen(false)}>
+              {t.nav.publications}
+            </Link>
+            <Link href={`/${locale}/articles`} onClick={() => setMobileOpen(false)}>
               {t.nav.articles}
             </Link>
             <Link href={`/${locale}/authors`} onClick={() => setMobileOpen(false)}>

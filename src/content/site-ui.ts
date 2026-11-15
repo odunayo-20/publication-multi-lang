@@ -1,6 +1,18 @@
 import type { Locale } from '@/i18n/config'
 
 const en = {
+  articles: {
+    metaTitle: 'Articles',
+    eyebrow: 'Articles',
+    title: 'Writing on research and publishing',
+    lead: 'Guides, explainers and news from the editorial team.',
+    empty: 'No articles have been published yet.',
+    readMore: 'Read article',
+    back: 'All articles',
+    by: 'By',
+    published: 'Published',
+    tags: 'Topics',
+  },
   search: {
     title: 'Search',
     metaTitle: 'Search the archive',
@@ -119,6 +131,18 @@ const en = {
 export type SiteUi = typeof en
 
 const hr: SiteUi = {
+  articles: {
+    metaTitle: 'Članci',
+    eyebrow: 'Članci',
+    title: 'Tekstovi o istraživanju i objavljivanju',
+    lead: 'Vodiči, objašnjenja i novosti uredništva.',
+    empty: 'Još nema objavljenih članaka.',
+    readMore: 'Pročitaj članak',
+    back: 'Svi članci',
+    by: 'Autor:',
+    published: 'Objavljeno',
+    tags: 'Teme',
+  },
   search: {
     title: 'Pretraga',
     metaTitle: 'Pretraži arhiv',

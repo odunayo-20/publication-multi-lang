@@ -6501,3 +6501,19 @@ summary:focus-visible {
     padding: 2.25rem 0 2rem;
   }
 }
+
+/* ===== Articles (ar-) ===== */
+.ar-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; max-width: 46rem; }
+.ar-item time, .ar-meta { font-size: 0.85rem; color: var(--muted); }
+.ar-item h2 { font-family: var(--font-serif); font-size: 1.35rem; margin: 0.3rem 0 0.5rem; }
+.ar-item h2 a { color: inherit; text-decoration: none; }
+.ar-item h2 a:hover { color: var(--accent); }
+.ar-item p { margin: 0 0 0.75rem; color: var(--muted); line-height: 1.6; }
+.ar-more { display: inline-flex; align-items: center; gap: 0.3rem; font-weight: 600; font-size: 0.9rem; color: var(--accent); }
+.ar-back { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.85rem; color: var(--muted); margin-bottom: 1rem; }
+.ar-meta { display: flex; flex-wrap: wrap; gap: 1rem; margin: 1.25rem 0 0; }
+.ar-meta a { color: var(--accent); }
+.ar-body { max-width: 46rem; padding: 2.5rem 0 4rem; line-height: 1.75; font-size: 1.05rem; }
+.ar-body h2 { font-family: var(--font-serif); margin: 2rem 0 0.5rem; }
+.ar-tags { list-style: none; display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0; margin: 2rem 0 0; }
+.ar-tags li { border: 1px solid var(--rule); border-radius: 999px; padding: 0.2rem 0.7rem; font-size: 0.8rem; color: var(--muted); }
