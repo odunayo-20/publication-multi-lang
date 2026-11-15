@@ -68,11 +68,14 @@ export interface Config {
   blocks: {};
   collections: {
     publications: Publication;
+    journals: Journal;
     articles: Article;
     pages: Page;
     authors: Author;
     tags: Tag;
     media: Media;
+    manuscripts: Manuscript;
+    submissions: Submission;
     redirects: Redirect;
     users: User;
     'payload-kv': PayloadKv;
@@ -83,11 +86,14 @@ export interface Config {
   collectionsJoins: {};
   collectionsSelect: {
     publications: PublicationsSelect<false> | PublicationsSelect<true>;
+    journals: JournalsSelect<false> | JournalsSelect<true>;
     articles: ArticlesSelect<false> | ArticlesSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
     authors: AuthorsSelect<false> | AuthorsSelect<true>;
     tags: TagsSelect<false> | TagsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    manuscripts: ManuscriptsSelect<false> | ManuscriptsSelect<true>;
+    submissions: SubmissionsSelect<false> | SubmissionsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -191,6 +197,18 @@ export interface Publication {
    * Show under "Selected publications" on the home page.
    */
   featured?: boolean | null;
+  viewCount?: number | null;
+  citationCount?: number | null;
+  /**
+   * Colour of the generated cover on cards.
+   */
+  coverStyle?: ('gradient-cs' | 'gradient-edu' | 'gradient-energy' | 'gradient-hydro') | null;
+  keywords?:
+    | {
+        keyword: string;
+        id?: string | null;
+      }[]
+    | null;
   /**
    * Optional. Leave empty to use the title and excerpt.
    */
@@ -259,6 +277,47 @@ export interface Tag {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "journals".
+ */
+export interface Journal {
+  id: number;
+  name: string;
+  /**
+   * Generated from the title if left empty.
+   */
+  slug?: string | null;
+  initials: string;
+  category: 'cs' | 'edu' | 'health' | 'eng' | 'social' | 'biz' | 'natural' | 'arts' | 'law' | 'math' | 'other';
+  scope: string;
+  /**
+   * e.g. 2582-4120
+   */
+  issn?: string | null;
+  eIssn?: string | null;
+  citeScore?: number | null;
+  /**
+   * e.g. 21%
+   */
+  acceptanceRate?: string | null;
+  /**
+   * e.g. 21 days
+   */
+  reviewTime?: string | null;
+  indexing?:
+    | {
+        service: string;
+        id?: string | null;
+      }[]
+    | null;
+  badgeColor?:
+    | ('badge-blue' | 'badge-navy' | 'badge-teal' | 'badge-cyan' | 'badge-indigo' | 'badge-amber' | 'badge-emerald')
+    | null;
+  featured?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "articles".
  */
 export interface Article {
@@ -311,8 +370,45 @@ export interface Author {
    * Generated from the title if left empty.
    */
   slug?: string | null;
+  /**
+   * Every way this person is printed in publication author lists (e.g. "Trošelj J."). Publications are matched to the profile by these names.
+   */
+  aliases?:
+    | {
+        name: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * e.g. Senior Lecturer, Computer Science
+   */
+  title?: string | null;
+  institution?: string | null;
+  location?: string | null;
   bio?: string | null;
+  interests?:
+    | {
+        interest: string;
+        id?: string | null;
+      }[]
+    | null;
   avatar?: (number | null) | Media;
+  /**
+   * Colour of the initials avatar when there is no photo.
+   */
+  gradient?: ('gradient-cs' | 'gradient-edu' | 'gradient-energy' | 'gradient-hydro') | null;
+  isVerified?: boolean | null;
+  memberSince?: number | null;
+  links?: {
+    /**
+     * Full https://orcid.org/… URL
+     */
+    orcid?: string | null;
+    scholar?: string | null;
+    researchgate?: string | null;
+    linkedin?: string | null;
+    website?: string | null;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -356,24 +452,22 @@ export interface Page {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "redirects".
+ * via the `definition` "manuscripts".
  */
-export interface Redirect {
+export interface Manuscript {
   id: number;
-  /**
-   * Path on this site, e.g. /2022/05/12/flood-paper
-   */
-  from: string;
-  /**
-   * A path (/en/publications) or a full https:// URL.
-   */
-  to: string;
-  /**
-   * Permanent (308) tells search engines to move the old address.
-   */
-  permanent?: boolean | null;
+  owner?: (number | null) | User;
   updatedAt: string;
   createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -382,7 +476,19 @@ export interface Redirect {
 export interface User {
   id: number;
   name?: string | null;
-  roles: ('admin' | 'editor')[];
+  roles: ('admin' | 'editor' | 'author')[];
+  /**
+   * The public author profile this account owns.
+   */
+  authorProfile?: (number | null) | Author;
+  /**
+   * Authors this reader follows.
+   */
+  followedAuthors?: (number | Author)[] | null;
+  /**
+   * Publications this reader saved.
+   */
+  savedPublications?: (number | Publication)[] | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -402,6 +508,68 @@ export interface User {
     | null;
   password?: string | null;
   collection: 'users';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "submissions".
+ */
+export interface Submission {
+  id: number;
+  title: string;
+  type:
+    | 'journal-article'
+    | 'book-chapter'
+    | 'conference-paper'
+    | 'proceedings-paper'
+    | 'bulletin-article'
+    | 'invited-talk'
+    | 'invited-lecture'
+    | 'preprint'
+    | 'other';
+  journal: number | Journal;
+  abstract: string;
+  keywords?:
+    | {
+        keyword: string;
+        id?: string | null;
+      }[]
+    | null;
+  coAuthors?:
+    | {
+        name: string;
+        id?: string | null;
+      }[]
+    | null;
+  manuscript: number | Manuscript;
+  status: 'submitted' | 'under-review' | 'revisions' | 'accepted' | 'rejected' | 'published';
+  submitter?: (number | null) | User;
+  /**
+   * Visible to the author.
+   */
+  editorNotes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "redirects".
+ */
+export interface Redirect {
+  id: number;
+  /**
+   * Path on this site, e.g. /2022/05/12/flood-paper
+   */
+  from: string;
+  /**
+   * A path (/en/publications) or a full https:// URL.
+   */
+  to: string;
+  /**
+   * Permanent (308) tells search engines to move the old address.
+   */
+  permanent?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -432,6 +600,10 @@ export interface PayloadLockedDocument {
         value: number | Publication;
       } | null)
     | ({
+        relationTo: 'journals';
+        value: number | Journal;
+      } | null)
+    | ({
         relationTo: 'articles';
         value: number | Article;
       } | null)
@@ -450,6 +622,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'manuscripts';
+        value: number | Manuscript;
+      } | null)
+    | ({
+        relationTo: 'submissions';
+        value: number | Submission;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -527,6 +707,15 @@ export interface PublicationsSelect<T extends boolean = true> {
   pdf?: T;
   tags?: T;
   featured?: T;
+  viewCount?: T;
+  citationCount?: T;
+  coverStyle?: T;
+  keywords?:
+    | T
+    | {
+        keyword?: T;
+        id?: T;
+      };
   seo?:
     | T
     | {
@@ -537,6 +726,32 @@ export interface PublicationsSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "journals_select".
+ */
+export interface JournalsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  initials?: T;
+  category?: T;
+  scope?: T;
+  issn?: T;
+  eIssn?: T;
+  citeScore?: T;
+  acceptanceRate?: T;
+  reviewTime?: T;
+  indexing?:
+    | T
+    | {
+        service?: T;
+        id?: T;
+      };
+  badgeColor?: T;
+  featured?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -588,8 +803,35 @@ export interface PagesSelect<T extends boolean = true> {
 export interface AuthorsSelect<T extends boolean = true> {
   name?: T;
   slug?: T;
+  aliases?:
+    | T
+    | {
+        name?: T;
+        id?: T;
+      };
+  title?: T;
+  institution?: T;
+  location?: T;
   bio?: T;
+  interests?:
+    | T
+    | {
+        interest?: T;
+        id?: T;
+      };
   avatar?: T;
+  gradient?: T;
+  isVerified?: T;
+  memberSince?: T;
+  links?:
+    | T
+    | {
+        orcid?: T;
+        scholar?: T;
+        researchgate?: T;
+        linkedin?: T;
+        website?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -647,6 +889,52 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "manuscripts_select".
+ */
+export interface ManuscriptsSelect<T extends boolean = true> {
+  owner?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "submissions_select".
+ */
+export interface SubmissionsSelect<T extends boolean = true> {
+  title?: T;
+  type?: T;
+  journal?: T;
+  abstract?: T;
+  keywords?:
+    | T
+    | {
+        keyword?: T;
+        id?: T;
+      };
+  coAuthors?:
+    | T
+    | {
+        name?: T;
+        id?: T;
+      };
+  manuscript?: T;
+  status?: T;
+  submitter?: T;
+  editorNotes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects_select".
  */
 export interface RedirectsSelect<T extends boolean = true> {
@@ -663,6 +951,9 @@ export interface RedirectsSelect<T extends boolean = true> {
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
   roles?: T;
+  authorProfile?: T;
+  followedAuthors?: T;
+  savedPublications?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;

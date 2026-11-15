@@ -7,15 +7,16 @@ import { getPayload } from 'payload'
 import { cache } from 'react'
 
 import { ArticleActions, ArticleShareCard } from '@/components/article/ArticleActions'
+import { SaveButton } from '@/components/article/SaveButton'
 import { doiUrl, pdfUrlOf, typeLabel } from '@/components/Publication'
 import {
   getBenchmarkPublication,
   getBenchmarkRelatedPublications,
   type ExtendedBenchmarkPublication,
 } from '@/data/benchmark-publications'
-import { academicJournals } from '@/data/journals'
 import { locales, type Locale } from '@/i18n/config'
 import { messages } from '@/i18n/messages'
+import { getCurrentUser } from '@/lib/auth'
 import { bibtex, scholarMeta, venueDetail } from '@/lib/citation'
 import { siteUrl } from '@/lib/site'
 import { jsonLdScript } from '@/lib/structured-data'
@@ -120,16 +121,18 @@ export default async function PublicationDetailPage({ params }: Args) {
 
   // Extract extended benchmark attributes if present
   const extPub = pub as Partial<ExtendedBenchmarkPublication>
-  const coverGradient = extPub.coverGradient || 'gradient-energy'
-  const viewsMetric = extPub.views || '1.2k'
-  const citationsMetric = extPub.citationsCount || '23'
-  const keywords = extPub.keywordsList || [
+  const coverGradient = extPub.coverGradient || (!('coverGradient' in pub) ? (pub as Publication).coverStyle : null) || 'gradient-energy'
+  const compactNumber = new Intl.NumberFormat(locale, { notation: 'compact' })
+  const viewsMetric = extPub.views ?? compactNumber.format((pub as Publication).viewCount ?? 0)
+  const citationsMetric = extPub.citationsCount ?? compactNumber.format((pub as Publication).citationCount ?? 0)
+  const storedKeywords = 'coverGradient' in pub ? [] : ((pub as Publication).keywords?.map((k) => k.keyword) ?? [])
+  const keywords = extPub.keywordsList || (storedKeywords.length ? storedKeywords : [
     typeLabel(locale, pub.type),
     pub.venue || 'Academic Research',
     'Peer-Reviewed',
     'Open Access',
     'Data Analytics',
-  ]
+  ])
 
   // Author initial for avatar
   const authorInitials = primaryAuthor
@@ -140,9 +143,25 @@ export default async function PublicationDetailPage({ params }: Args) {
     .toUpperCase()
 
   // Match corresponding flagship journal if known
+  const payloadClient = await getPayload({ config })
   const matchedJournal = pub.venue
-    ? academicJournals.find((j) => j.name.toLowerCase() === pub.venue?.toLowerCase())
+    ? (
+        await payloadClient.find({
+          collection: 'journals',
+          where: { name: { equals: pub.venue } },
+          limit: 1,
+          depth: 0,
+          overrideAccess: false,
+        })
+      ).docs[0]
     : null
+
+  // Saving only makes sense for publications stored in the database (not the built-in samples).
+  const isStored = !('coverGradient' in pub)
+  const user = isStored ? await getCurrentUser() : null
+  const initiallySaved = Boolean(
+    user?.savedPublications?.some((p) => (typeof p === 'object' ? p.id : p) === pub.id),
+  )
 
   const journalLink = matchedJournal
     ? `/${locale}/journals/${matchedJournal.slug}`
@@ -185,7 +204,22 @@ export default async function PublicationDetailPage({ params }: Args) {
             doi={pub.doi}
             bibtexString={bibtexCode}
             apaString={apaCitation}
-          />
+          >
+            {isStored && (
+              <SaveButton
+                publicationId={pub.id as number}
+                locale={locale}
+                signedIn={Boolean(user)}
+                initialSaved={initiallySaved}
+                signInHref={`/${locale}/sign-in?next=${encodeURIComponent(`/${locale}/publications/${slug}`)}`}
+                labels={{
+                  save: t.account.savePublication,
+                  saved: t.account.savedPublication,
+                  error: t.authorProfile.actionFailed,
+                }}
+              />
+            )}
+          </ArticleActions>
         </div>
 
         {/* Category Subject Badge */}

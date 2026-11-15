@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { isStaff, publishedOrStaff } from '@/access'
+import { coverStyles } from '@/collections/Authors'
 import { seoField } from '@/fields/seo'
 import { slugField, uniqueSlug } from '@/fields/slug'
 import { isDoi, normalizeDoi } from '@/lib/doi'
@@ -134,6 +135,21 @@ export const Publications: CollectionConfig = {
       defaultValue: false,
       admin: { position: 'sidebar', description: 'Show under "Selected publications" on the home page.' },
     },
+    {
+      type: 'row',
+      fields: [
+        { name: 'viewCount', type: 'number', defaultValue: 0, min: 0, admin: { step: 1 } },
+        { name: 'citationCount', type: 'number', defaultValue: 0, min: 0, admin: { step: 1 } },
+      ],
+    },
+    {
+      name: 'coverStyle',
+      type: 'select',
+      defaultValue: 'gradient-cs',
+      options: coverStyles,
+      admin: { position: 'sidebar', description: 'Colour of the generated cover on cards.' },
+    },
+    { name: 'keywords', type: 'array', maxRows: 12, fields: [{ name: 'keyword', type: 'text', required: true }] },
     seoField,
   ],
 }

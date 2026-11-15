@@ -13,15 +13,18 @@ import {
   Sigma,
   Users,
 } from 'lucide-react'
+import config from '@payload-config'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { getPayload } from 'payload'
 
 import { AuthorActions } from '@/components/authors/AuthorActions'
 import { AuthorWorks } from '@/components/authors/AuthorWorks'
-import { authorRecords, getAuthorProfile, initialsOf } from '@/data/authors'
 import { locales, type Locale } from '@/i18n/config'
 import { messages } from '@/i18n/messages'
+import { getCurrentUser } from '@/lib/auth'
+import { getAuthorProfile, initialsOf } from '@/lib/authors'
 import { siteUrl } from '@/lib/site'
 import { jsonLdScript, personJsonLd } from '@/lib/structured-data'
 
@@ -29,17 +32,15 @@ export const dynamic = 'force-dynamic'
 
 type Args = { params: Promise<{ locale: Locale; slug: string }> }
 
-export const generateStaticParams = () =>
-  locales.flatMap((locale) => authorRecords.map((a) => ({ locale, slug: a.slug })))
-
 export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const { locale, slug } = await params
-  const profile = getAuthorProfile(slug)
+  const payload = await getPayload({ config })
+  const profile = await getAuthorProfile(payload, slug, locale)
   if (!profile) return {}
   const { record } = profile
   return {
     title: `${record.name} | AcadPress`,
-    description: `${record.title[locale]} · ${record.institution}. ${record.bio[locale].slice(0, 140)}…`,
+    description: [record.title, record.institution, record.bio.slice(0, 140)].filter(Boolean).join(' · '),
     alternates: {
       canonical: `/${locale}/authors/${slug}`,
       languages: Object.fromEntries(locales.map((l) => [l, `/${l}/authors/${slug}`])),
@@ -51,8 +52,13 @@ const formatNumber = (locale: string, n: number) => new Intl.NumberFormat(locale
 
 export default async function AuthorProfilePage({ params }: Args) {
   const { locale, slug } = await params
-  const profile = getAuthorProfile(slug)
+  const payload = await getPayload({ config })
+  const profile = await getAuthorProfile(payload, slug, locale)
   if (!profile) notFound()
+  const user = await getCurrentUser()
+  const initialFollowing = Boolean(
+    user?.followedAuthors?.some((a) => (typeof a === 'object' ? a.id : a) === profile.record.id),
+  )
 
   const t = messages[locale].authorProfile
   const { record, works, stats, byYear, topVenues, coAuthors } = profile
@@ -78,10 +84,10 @@ export default async function AuthorProfilePage({ params }: Args) {
   const jsonLd = personJsonLd({
     name: record.name,
     url: `${siteUrl}/${locale}/authors/${slug}`,
-    jobTitle: record.title[locale],
+    jobTitle: record.title,
     institution: record.institution,
     profileUrls: identifiers.map((i) => i.href),
-    description: record.bio[locale],
+    description: record.bio,
   })
 
   return (
@@ -99,7 +105,12 @@ export default async function AuthorProfilePage({ params }: Args) {
 
           <div className="ap-identity">
             <div className={`ap-avatar ${record.gradient}`} aria-hidden="true">
-              {initialsOf(record.name)}
+              {record.avatarUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={record.avatarUrl} alt="" className="ap-avatar-img" />
+              ) : (
+                initialsOf(record.name)
+              )}
             </div>
             <div className="ap-identity-text">
               <h1 className="ap-name">
@@ -111,17 +122,23 @@ export default async function AuthorProfilePage({ params }: Args) {
                   </span>
                 )}
               </h1>
-              <p className="ap-role">{record.title[locale]}</p>
+              <p className="ap-role">{record.title}</p>
               <ul className="ap-facts">
-                <li>
-                  <Building2 size={15} aria-hidden="true" /> {record.institution}
-                </li>
-                <li>
-                  <MapPin size={15} aria-hidden="true" /> {record.location}
-                </li>
-                <li>
-                  <BookOpen size={15} aria-hidden="true" /> {t.memberSince(record.memberSince)}
-                </li>
+                {record.institution && (
+                  <li>
+                    <Building2 size={15} aria-hidden="true" /> {record.institution}
+                  </li>
+                )}
+                {record.location && (
+                  <li>
+                    <MapPin size={15} aria-hidden="true" /> {record.location}
+                  </li>
+                )}
+                {record.memberSince && (
+                  <li>
+                    <BookOpen size={15} aria-hidden="true" /> {t.memberSince(record.memberSince)}
+                  </li>
+                )}
               </ul>
               <ul className="ap-interest-pills" aria-label={t.researchInterests}>
                 {record.interests.map((i) => (
@@ -130,7 +147,18 @@ export default async function AuthorProfilePage({ params }: Args) {
               </ul>
             </div>
             <AuthorActions
-              labels={{ follow: t.follow, following: t.following, share: t.shareProfile, copied: t.linkCopied }}
+              authorId={record.id}
+              locale={locale}
+              signedIn={Boolean(user)}
+              initialFollowing={initialFollowing}
+              signInHref={`/${locale}/sign-in?next=${encodeURIComponent(`/${locale}/authors/${slug}`)}`}
+              labels={{
+                follow: t.follow,
+                following: t.following,
+                share: t.shareProfile,
+                copied: t.linkCopied,
+                error: t.actionFailed,
+              }}
             />
           </div>
         </div>
@@ -194,11 +222,11 @@ export default async function AuthorProfilePage({ params }: Args) {
           </section>
 
           <aside className="ap-side">
-            <section id="about" className="ap-card" aria-labelledby="ap-about-h">
+            <section id="about" className="ap-card" aria-labelledby="ap-about-h" hidden={!record.bio}>
               <h2 id="ap-about-h" className="ap-h3">
                 {t.about}
               </h2>
-              <p className="ap-bio">{record.bio[locale]}</p>
+              <p className="ap-bio">{record.bio}</p>
             </section>
 
             {byYear.length > 0 && (

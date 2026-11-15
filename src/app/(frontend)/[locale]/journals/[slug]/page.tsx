@@ -16,9 +16,9 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 
-import { academicJournals } from '@/data/journals'
 import { locales, type Locale } from '@/i18n/config'
 import { messages } from '@/i18n/messages'
+import { getJournalBySlug } from '@/lib/journals'
 import { siteUrl } from '@/lib/site'
 import { jsonLdScript } from '@/lib/structured-data'
 
@@ -28,7 +28,8 @@ type Args = { params: Promise<{ locale: Locale; slug: string }> }
 
 export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const { locale, slug } = await params
-  const journal = academicJournals.find((j) => j.slug === slug)
+  const payload = await getPayload({ config })
+  const journal = await getJournalBySlug(payload, slug, locale)
   if (!journal) return {}
 
   return {
@@ -43,11 +44,11 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
 
 export default async function JournalDetailPage({ params }: Args) {
   const { locale, slug } = await params
-  const journal = academicJournals.find((j) => j.slug === slug)
+  const payload = await getPayload({ config })
+  const journal = await getJournalBySlug(payload, slug, locale)
   if (!journal) notFound()
 
   const t = messages[locale]
-  const payload = await getPayload({ config })
 
   // Find publications associated with this journal in the database
   const { docs: journalPubs } = await payload.find({
@@ -55,7 +56,7 @@ export default async function JournalDetailPage({ params }: Args) {
     locale,
     where: {
       venue: {
-        contains: journal.name.slice(0, 20),
+        equals: journal.name,
       },
     },
     limit: 6,

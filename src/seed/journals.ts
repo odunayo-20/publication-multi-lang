@@ -1,4 +1,4 @@
-export type AcademicJournal = {
+export type JournalSeed = {
   id: string
   initials: string
   name: string
@@ -17,28 +17,8 @@ export type AcademicJournal = {
   indexing: string[]
 }
 
-export type JournalCategory = {
-  id: string
-  name: string
-  count: number
-}
-
-export const journalCategories: JournalCategory[] = [
-  { id: 'all', name: 'All Categories', count: 320 },
-  { id: 'cs', name: 'Computer Science', count: 48 },
-  { id: 'edu', name: 'Education', count: 42 },
-  { id: 'health', name: 'Health Sciences', count: 37 },
-  { id: 'eng', name: 'Engineering', count: 36 },
-  { id: 'social', name: 'Social Sciences', count: 28 },
-  { id: 'biz', name: 'Business & Management', count: 24 },
-  { id: 'natural', name: 'Natural Sciences', count: 22 },
-  { id: 'arts', name: 'Arts & Humanities', count: 19 },
-  { id: 'law', name: 'Law', count: 12 },
-  { id: 'math', name: 'Mathematics', count: 10 },
-  { id: 'other', name: 'Other', count: 25 },
-]
-
-export const academicJournals: AcademicJournal[] = [
+/** Sample catalogue used to seed the `journals` collection. Run via src/seed/run.ts. */
+export const journalSeeds: JournalSeed[] = [
   {
     id: 'ict',
     initials: 'ICT',

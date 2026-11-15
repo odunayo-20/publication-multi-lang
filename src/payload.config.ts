@@ -10,10 +10,13 @@ import sharp from 'sharp'
 
 import { Articles } from '@/collections/Articles'
 import { Authors } from '@/collections/Authors'
+import { Journals } from '@/collections/Journals'
+import { Manuscripts } from '@/collections/Manuscripts'
 import { Media } from '@/collections/Media'
 import { Pages } from '@/collections/Pages'
 import { Publications } from '@/collections/Publications'
 import { Redirects } from '@/collections/Redirects'
+import { Submissions } from '@/collections/Submissions'
 import { Tags } from '@/collections/Tags'
 import { Users } from '@/collections/Users'
 import { SiteSettings } from '@/globals/SiteSettings'
@@ -27,7 +30,19 @@ export default buildConfig({
     user: Users.slug,
     importMap: { baseDir: path.resolve(dirname) },
   },
-  collections: [Publications, Articles, Pages, Authors, Tags, Media, Redirects, Users],
+  collections: [
+    Publications,
+    Journals,
+    Articles,
+    Pages,
+    Authors,
+    Tags,
+    Media,
+    Manuscripts,
+    Submissions,
+    Redirects,
+    Users,
+  ],
   globals: [SiteSettings],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
@@ -43,7 +58,7 @@ export default buildConfig({
   plugins: [
     vercelBlobStorage({
       enabled: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
-      collections: { media: true },
+      collections: { media: true, manuscripts: true },
       token: process.env.BLOB_READ_WRITE_TOKEN,
     }),
   ],

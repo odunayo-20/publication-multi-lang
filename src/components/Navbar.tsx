@@ -4,6 +4,7 @@ import { BookOpen, Search, Menu, X, ArrowUpRight } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
 
+import { SignOutButton } from '@/components/account/SignOutButton'
 import { LanguageSwitch } from '@/components/LanguageSwitch'
 import type { Locale } from '@/i18n/config'
 import { messages } from '@/i18n/messages'
@@ -11,9 +12,11 @@ import { messages } from '@/i18n/messages'
 type NavbarProps = {
   locale: Locale
   siteName?: string
+  /** Signed-in user's display name, or null when signed out. */
+  userName?: string | null
 }
 
-export function Navbar({ locale, siteName }: NavbarProps) {
+export function Navbar({ locale, siteName, userName }: NavbarProps) {
   const t = messages[locale]
   const [mobileOpen, setMobileOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
@@ -45,7 +48,7 @@ export function Navbar({ locale, siteName }: NavbarProps) {
           <Link href={`/${locale}/publications`} className="acad-nav-link">
             {t.nav.articles}
           </Link>
-          <Link href={`/${locale}/#authors`} className="acad-nav-link">
+          <Link href={`/${locale}/authors`} className="acad-nav-link">
             {t.nav.authors}
           </Link>
           <Link href={`/${locale}/#about`} className="acad-nav-link">
@@ -68,16 +71,27 @@ export function Navbar({ locale, siteName }: NavbarProps) {
           {/* Language Switch */}
           <LanguageSwitch locale={locale} label={t.language} />
 
-          {/* Sign In */}
-          <Link href="/admin" className="acad-login-btn">
-            {t.nav.signIn}
-          </Link>
-
-          {/* Submit Paper / Sign Up CTA */}
-          <Link href={`/${locale}/publications`} className="acad-primary-btn">
-            <span>{t.nav.submitPaper}</span>
-            <ArrowUpRight className="w-3.5 h-3.5" aria-hidden="true" />
-          </Link>
+          {userName ? (
+            <>
+              <Link href={`/${locale}/account`} className="acad-login-btn">
+                {userName}
+              </Link>
+              <Link href={`/${locale}/account/submissions/new`} className="acad-primary-btn">
+                <span>{t.nav.submitPaper}</span>
+                <ArrowUpRight className="w-3.5 h-3.5" aria-hidden="true" />
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link href={`/${locale}/sign-in`} className="acad-login-btn">
+                {t.nav.signIn}
+              </Link>
+              <Link href={`/${locale}/sign-up`} className="acad-primary-btn">
+                <span>{t.nav.signUp}</span>
+                <ArrowUpRight className="w-3.5 h-3.5" aria-hidden="true" />
+              </Link>
+            </>
+          )}
 
           {/* Mobile hamburger */}
           <button
@@ -123,23 +137,42 @@ export function Navbar({ locale, siteName }: NavbarProps) {
             <Link href={`/${locale}/publications`} onClick={() => setMobileOpen(false)}>
               {t.nav.articles}
             </Link>
-            <Link href={`/${locale}/#authors`} onClick={() => setMobileOpen(false)}>
+            <Link href={`/${locale}/authors`} onClick={() => setMobileOpen(false)}>
               {t.nav.authors}
             </Link>
             <Link href={`/${locale}/#about`} onClick={() => setMobileOpen(false)}>
               {t.nav.about}
             </Link>
             <div className="acad-mobile-actions">
-              <Link href="/admin" className="acad-login-btn" onClick={() => setMobileOpen(false)}>
-                {t.nav.signIn}
-              </Link>
-              <Link
-                href={`/${locale}/publications`}
-                className="acad-primary-btn"
-                onClick={() => setMobileOpen(false)}
-              >
-                {t.nav.submitPaper}
-              </Link>
+              {userName ? (
+                <>
+                  <Link
+                    href={`/${locale}/account`}
+                    className="acad-login-btn"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    {userName}
+                  </Link>
+                  <SignOutButton locale={locale} label={t.auth.signOut} className="acad-primary-btn" />
+                </>
+              ) : (
+                <>
+                  <Link
+                    href={`/${locale}/sign-in`}
+                    className="acad-login-btn"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    {t.nav.signIn}
+                  </Link>
+                  <Link
+                    href={`/${locale}/sign-up`}
+                    className="acad-primary-btn"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    {t.nav.signUp}
+                  </Link>
+                </>
+              )}
             </div>
           </nav>
         </div>

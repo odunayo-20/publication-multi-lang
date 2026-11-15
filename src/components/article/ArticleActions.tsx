@@ -1,7 +1,7 @@
 'use client'
 
 import { Download, Quote, Share2, Check, Copy, X, Mail } from 'lucide-react'
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 
 import type { Locale } from '@/i18n/config'
 import { messages } from '@/i18n/messages'
@@ -14,6 +14,8 @@ type ArticleActionsProps = {
   doi?: string | null
   bibtexString: string
   apaString: string
+  /** Extra buttons rendered after Cite (e.g. the Save toggle). */
+  children?: ReactNode
 }
 
 export function ArticleActions({
@@ -24,6 +26,7 @@ export function ArticleActions({
   doi,
   bibtexString,
   apaString,
+  children,
 }: ArticleActionsProps) {
   const t = messages[locale].articleDetail
   const [citeOpen, setCiteOpen] = useState(false)
@@ -85,6 +88,7 @@ export function ArticleActions({
           <Quote className="w-4 h-4 mr-1.5" aria-hidden="true" />
           <span>{t.cite}</span>
         </button>
+        {children}
       </div>
 
       {/* Citation Modal / Popover */}

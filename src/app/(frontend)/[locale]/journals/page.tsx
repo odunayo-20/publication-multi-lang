@@ -6,6 +6,7 @@ import { getPayload } from 'payload'
 import { JournalsExplorer } from '@/components/journals/JournalsExplorer'
 import { locales, type Locale } from '@/i18n/config'
 import { messages } from '@/i18n/messages'
+import { buildCategories, getJournals } from '@/lib/journals'
 import { siteUrl } from '@/lib/site'
 import { jsonLdScript } from '@/lib/structured-data'
 
@@ -36,16 +37,9 @@ export default async function JournalsPage({ params, searchParams }: Args) {
   const t = messages[locale].journalsPage
 
   const payload = await getPayload({ config })
-  const { docs: pubs } = await payload.find({
-    collection: 'publications',
-    locale,
-    pagination: false,
-    depth: 0,
-    overrideAccess: false,
-  })
-
-  // Extract distinct venues from actual database publications
-  const dbVenues = Array.from(new Set(pubs.map((p) => p.venue).filter(Boolean))) as string[]
+  const journals = await getJournals(payload, locale)
+  const categories = buildCategories(journals, t.allCategories)
+  const publicationCount = journals.reduce((sum, j) => sum + j.articlesCount, 0)
 
   return (
     <div className="acad-journals-page-root">
@@ -67,13 +61,13 @@ export default async function JournalsPage({ params, searchParams }: Args) {
             {/* Quick Metrics Bar */}
             <div className="acad-journals-metrics-bar">
               <div className="acad-jm-item">
-                <span className="acad-jm-val">12</span>
-                <span className="acad-jm-label">Flagship Journals</span>
+                <span className="acad-jm-val">{journals.length}</span>
+                <span className="acad-jm-label">Journals</span>
               </div>
               <div className="acad-jm-divider" aria-hidden="true" />
               <div className="acad-jm-item">
-                <span className="acad-jm-val">320</span>
-                <span className="acad-jm-label">Volume Issues</span>
+                <span className="acad-jm-val">{publicationCount}</span>
+                <span className="acad-jm-label">Published Articles</span>
               </div>
               <div className="acad-jm-divider" aria-hidden="true" />
               <div className="acad-jm-item">
@@ -96,7 +90,8 @@ export default async function JournalsPage({ params, searchParams }: Args) {
           locale={locale}
           initialCategory={category || 'all'}
           initialQuery={q || ''}
-          dbVenues={dbVenues}
+          journals={journals}
+          categories={categories}
         />
       </div>
 

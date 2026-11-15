@@ -196,3 +196,76 @@ describe('media', () => {
     await expect(upload(`test-${run}.svg`, 'image/svg+xml', svg, 'x')).rejects.toThrow()
   })
 })
+
+describe('accounts', () => {
+  const makeUser = async (label: string, roles?: string[]) =>
+    track(
+      'users',
+      await payload.create({
+        collection: 'users',
+        data: { email: `test-${run}-${label}@example.test`, password: 'test-password-123', roles } as never,
+      }),
+    )
+
+  it('forces public sign-ups to be plain authors, whatever roles they send', async () => {
+    const user = await makeUser('roles', ['admin'])
+    expect(user.roles).toEqual(['author'])
+  })
+
+  it('rejects passwords shorter than 8 characters', async () => {
+    await expect(
+      payload.create({
+        collection: 'users',
+        data: { email: `test-${run}-short@example.test`, password: 'short' } as never,
+      }),
+    ).rejects.toThrow()
+  })
+
+  it('lets an author read only their own submissions', async () => {
+    const owner = await makeUser('owner')
+    const other = await makeUser('other')
+    const journal = track(
+      'journals',
+      await payload.create({
+        collection: 'journals',
+        data: { name: `[TEST] ${run} journal`, initials: 'TJ', category: 'other', scope: 'Test scope' },
+      }),
+    )
+    const file = { name: `test-${run}.pdf`, mimetype: 'application/pdf', data: pdf, size: pdf.length }
+    const manuscript = track(
+      'manuscripts',
+      await payload.create({ collection: 'manuscripts', data: {}, file, user: owner, overrideAccess: false }),
+    )
+    const submission = track(
+      'submissions',
+      await payload.create({
+        collection: 'submissions',
+        data: {
+          title: `[TEST] ${run} submission`,
+          type: 'journal-article',
+          journal: journal.id,
+          abstract: 'x'.repeat(60),
+          manuscript: manuscript.id,
+          status: 'accepted', // must be ignored for non-staff
+        },
+        user: owner,
+        overrideAccess: false,
+      }),
+    )
+    expect(submission.status).toBe('submitted')
+
+    const mine = await payload.find({ collection: 'submissions', user: owner, overrideAccess: false })
+    expect(mine.docs.map((d) => d.id)).toContain(submission.id)
+    const theirs = await payload.find({ collection: 'submissions', user: other, overrideAccess: false })
+    expect(theirs.docs.map((d) => d.id)).not.toContain(submission.id)
+    await expect(
+      payload.update({
+        collection: 'submissions',
+        id: submission.id,
+        data: { status: 'accepted' },
+        user: owner,
+        overrideAccess: false,
+      }),
+    ).rejects.toThrow()
+  })
+})

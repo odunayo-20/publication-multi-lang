@@ -14,21 +14,24 @@ import {
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
 
-import { academicJournals, journalCategories, type AcademicJournal } from '@/data/journals'
 import type { Locale } from '@/i18n/config'
 import { messages } from '@/i18n/messages'
+import type { AcademicJournal, JournalCategory } from '@/lib/journals'
 
 type JournalsExplorerProps = {
   locale: Locale
   initialCategory?: string
   initialQuery?: string
-  dbVenues?: string[]
+  journals: AcademicJournal[]
+  categories: JournalCategory[]
 }
 
 export function JournalsExplorer({
   locale,
   initialCategory = 'all',
   initialQuery = '',
+  journals: academicJournals,
+  categories: journalCategories,
 }: JournalsExplorerProps) {
   const t = messages[locale]
   const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory)
@@ -64,7 +67,7 @@ export function JournalsExplorer({
     })
 
     return result
-  }, [selectedCategory, searchQuery, sortBy])
+  }, [academicJournals, selectedCategory, searchQuery, sortBy])
 
   const activeCategoryObj = journalCategories.find((c) => c.id === selectedCategory)
 

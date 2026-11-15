@@ -4,7 +4,7 @@ import { Eye, Quote, Search } from 'lucide-react'
 import Link from 'next/link'
 import { useId, useMemo, useState } from 'react'
 
-import type { AuthorWork } from '@/data/authors'
+import type { AuthorWork } from '@/lib/authors'
 
 type Props = {
   locale: string

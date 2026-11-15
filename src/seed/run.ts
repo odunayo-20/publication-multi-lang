@@ -2,6 +2,9 @@ import { getPayload, type Payload } from 'payload'
 import type { SiteSetting } from '@/payload-types'
 import config from '../payload.config'
 import { homeSummary, researchFocus, roleHr } from './home-content'
+import { benchmarkPublications } from '../data/benchmark-publications'
+import { authorSeeds } from './authors'
+import { journalSeeds } from './journals'
 import { seedPublications } from './publications'
 
 const isSelf = (name: string) => /^tro[sš]elj\s+j\.?$/i.test(name.trim())
@@ -50,6 +53,115 @@ const seedSiteSettings = async (payload: Payload) => {
   payload.logger.info(`Site settings seed: ${filled.join(', ') || 'nothing to fill'}`)
 }
 
+const compact = (value: string): number => {
+  const v = value.trim().toLowerCase()
+  const n = Number.parseFloat(v)
+  if (Number.isNaN(n)) return 0
+  return Math.round(v.endsWith('k') ? n * 1000 : n)
+}
+
+/** Idempotent: a journal is skipped when its name already exists. */
+const seedJournals = async (payload: Payload) => {
+  let created = 0
+  for (const j of journalSeeds) {
+    const existing = await payload.count({ collection: 'journals', where: { name: { equals: j.name } } })
+    if (existing.totalDocs) continue
+    await payload.create({
+      collection: 'journals',
+      data: {
+        name: j.name,
+        slug: j.slug,
+        initials: j.initials,
+        category: j.categoryId as never,
+        scope: j.scope,
+        issn: j.issn,
+        eIssn: j.eIssn,
+        citeScore: j.citeScore,
+        acceptanceRate: j.acceptanceRate,
+        reviewTime: j.reviewTime,
+        badgeColor: j.badgeColor as never,
+        featured: Boolean(j.isFeatured),
+        indexing: j.indexing.map((service) => ({ service })),
+      },
+    })
+    created++
+  }
+  payload.logger.info(`Journals seed: ${created} created`)
+}
+
+/** Idempotent: an author is skipped when the slug already exists. */
+const seedAuthors = async (payload: Payload) => {
+  let created = 0
+  for (const a of authorSeeds) {
+    const existing = await payload.count({ collection: 'authors', where: { slug: { equals: a.slug } } })
+    if (existing.totalDocs) continue
+    const doc = await payload.create({
+      collection: 'authors',
+      locale: 'en',
+      data: {
+        name: a.name,
+        slug: a.slug,
+        aliases: a.aliases.filter((n) => n !== a.name).map((name) => ({ name })),
+        title: a.title.en,
+        institution: a.institution,
+        location: a.location,
+        bio: a.bio.en,
+        interests: a.interests.map((interest) => ({ interest })),
+        gradient: a.gradient as never,
+        isVerified: a.isVerified,
+        memberSince: a.memberSince,
+        links: a.links,
+      },
+    })
+    await payload.update({
+      collection: 'authors',
+      id: doc.id,
+      locale: 'hr',
+      data: { title: a.title.hr, bio: a.bio.hr },
+    })
+    created++
+  }
+  payload.logger.info(`Authors seed: ${created} created`)
+}
+
+/** The sample publications the public pages used to hard-code. Idempotent by DOI or title. */
+const seedSamplePublications = async (payload: Payload) => {
+  let created = 0
+  for (const p of Object.values(benchmarkPublications)) {
+    const existing = await payload.find({
+      collection: 'publications',
+      draft: true,
+      limit: 1,
+      depth: 0,
+      where: { or: [{ doi: { equals: (p.doi ?? '').toLowerCase() } }, { title: { equals: p.title } }] },
+    })
+    if (existing.docs.length) continue
+    await payload.create({
+      collection: 'publications',
+      data: {
+        title: p.title,
+        slug: p.slug ?? undefined,
+        type: p.type,
+        authors: p.authors.map((a) => ({ name: a.name, isSelf: false })),
+        venue: p.venue,
+        year: p.year,
+        volume: p.volume,
+        issue: p.issue,
+        pages: p.pages,
+        doi: p.doi,
+        abstract: p.abstract,
+        viewCount: compact(p.views),
+        citationCount: compact(p.citationsCount),
+        coverStyle: p.coverGradient as never,
+        keywords: p.keywordsList.map((keyword) => ({ keyword })),
+        _status: 'published',
+      },
+    })
+    created++
+  }
+  payload.logger.info(`Sample publications seed: ${created} created`)
+}
+
 /**
  * Idempotent: an entry is skipped when its DOI or exact title already exists.
  * Run with the direct (unpooled) Neon URL, the pooled one stalls while Payload syncs the schema:
@@ -88,6 +200,9 @@ const run = async () => {
 
   payload.logger.info(`Publications seed: ${created} created, ${skipped} skipped`)
 
+  await seedJournals(payload)
+  await seedAuthors(payload)
+  await seedSamplePublications(payload)
   await seedSiteSettings(payload)
   process.exit(0)
 }
