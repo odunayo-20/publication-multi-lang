@@ -8,43 +8,74 @@ import { cache } from 'react'
 
 import { ArticleActions, ArticleShareCard } from '@/components/article/ArticleActions'
 import { doiUrl, pdfUrlOf, typeLabel } from '@/components/Publication'
+import {
+  getBenchmarkPublication,
+  getBenchmarkRelatedPublications,
+  type ExtendedBenchmarkPublication,
+} from '@/data/benchmark-publications'
 import { academicJournals } from '@/data/journals'
 import { locales, type Locale } from '@/i18n/config'
 import { messages } from '@/i18n/messages'
 import { bibtex, scholarMeta, venueDetail } from '@/lib/citation'
 import { siteUrl } from '@/lib/site'
 import { jsonLdScript } from '@/lib/structured-data'
+import type { Publication } from '@/payload-types'
 
 export const dynamic = 'force-dynamic'
 
 type Args = { params: Promise<{ locale: Locale; slug: string }> }
 
-const getPublication = cache(async (locale: Locale, slug: string) => {
-  const payload = await getPayload({ config })
-  const { docs } = await payload.find({
-    collection: 'publications',
-    locale,
-    where: { slug: { equals: slug } },
-    limit: 1,
-    depth: 1,
-    overrideAccess: false,
-  })
-  return docs[0] ?? null
-})
+const getPublication = cache(
+  async (locale: Locale, slug: string): Promise<Publication | ExtendedBenchmarkPublication | null> => {
+    try {
+      const payload = await getPayload({ config })
+      const { docs } = await payload.find({
+        collection: 'publications',
+        locale,
+        where: { slug: { equals: slug } },
+        limit: 1,
+        depth: 1,
+        overrideAccess: false,
+      })
+      if (docs[0]) return docs[0]
+    } catch (err) {
+      console.warn('Payload CMS publication fetch error, falling back to benchmark dictionary:', err)
+    }
 
-const getRelatedPublications = cache(async (locale: Locale, currentId: string | number) => {
-  const payload = await getPayload({ config })
-  const { docs } = await payload.find({
-    collection: 'publications',
-    locale,
-    where: { id: { not_equals: currentId } },
-    limit: 3,
-    sort: ['-year'],
-    depth: 0,
-    overrideAccess: false,
-  })
-  return docs
-})
+    // Graceful fallback to benchmark showcase publication dictionary
+    return getBenchmarkPublication(slug)
+  },
+)
+
+const getRelatedPublications = cache(
+  async (locale: Locale, currentId: string | number, currentSlug?: string) => {
+    try {
+      const payload = await getPayload({ config })
+      const { docs } = await payload.find({
+        collection: 'publications',
+        locale,
+        where: { id: { not_equals: currentId } },
+        limit: 3,
+        sort: ['-year'],
+        depth: 0,
+        overrideAccess: false,
+      })
+      if (docs.length > 0) {
+        return docs.map((r, i) => ({
+          id: r.id,
+          title: r.title,
+          slug: r.slug ?? '',
+          date: String(r.year),
+          coverGradient: ['gradient-cs', 'gradient-energy', 'gradient-hydro'][i % 3],
+        }))
+      }
+    } catch {
+      // fallback
+    }
+
+    return getBenchmarkRelatedPublications(currentSlug, 3)
+  },
+)
 
 const SCHOLARLY = ['journal-article', 'bulletin-article', 'conference-paper', 'proceedings-paper', 'preprint']
 
@@ -84,44 +115,15 @@ export default async function PublicationDetailPage({ params }: Args) {
     detail ? `, ${detail}` : ''
   }.${pub.doi ? ` https://doi.org/${pub.doi}` : ''}`
 
-  // Fetch real related articles or supply fallbacks
-  const relatedDocs = await getRelatedPublications(locale, pub.id)
+  // Fetch real related articles or supply benchmarks
+  const relatedArticles = await getRelatedPublications(locale, pub.id, pub.slug ?? slug)
 
-  const relatedArticles =
-    relatedDocs.length > 0
-      ? relatedDocs.map((r, i) => ({
-          id: r.id,
-          title: r.title,
-          slug: r.slug,
-          date: String(r.year),
-          coverGradient: ['gradient-cs', 'gradient-energy', 'gradient-hydro'][i % 3],
-        }))
-      : [
-          {
-            id: 'r1',
-            title: 'Deep Learning for Urban Traffic Management Systems',
-            slug: 'deep-learning-urban-traffic-management',
-            date: 'Nov 10, 2025',
-            coverGradient: 'gradient-cs',
-          },
-          {
-            id: 'r2',
-            title: 'Data-Driven Energy Optimization in Smart Grids',
-            slug: 'data-driven-energy-optimization',
-            date: 'Nov 08, 2025',
-            coverGradient: 'gradient-energy',
-          },
-          {
-            id: 'r3',
-            title: 'AI in Smart City Infrastructure Resilience',
-            slug: 'ai-smart-city-infrastructure',
-            date: 'Nov 02, 2025',
-            coverGradient: 'gradient-hydro',
-          },
-        ]
-
-  // Keywords derived from tags or topic keywords
-  const keywords = [
+  // Extract extended benchmark attributes if present
+  const extPub = pub as Partial<ExtendedBenchmarkPublication>
+  const coverGradient = extPub.coverGradient || 'gradient-energy'
+  const viewsMetric = extPub.views || '1.2k'
+  const citationsMetric = extPub.citationsCount || '23'
+  const keywords = extPub.keywordsList || [
     typeLabel(locale, pub.type),
     pub.venue || 'Academic Research',
     'Peer-Reviewed',
@@ -217,18 +219,22 @@ export default async function PublicationDetailPage({ params }: Args) {
 
             <span className="acad-meta-item">
               <Eye className="w-3.5 h-3.5 mr-1" aria-hidden="true" />
-              <span>1.2k {t.articleDetail.views}</span>
+              <span>
+                {viewsMetric} {t.articleDetail.views}
+              </span>
             </span>
 
             <span className="acad-meta-item">
               <Quote className="w-3.5 h-3.5 mr-1" aria-hidden="true" />
-              <span>23 {t.articleDetail.citations}</span>
+              <span>
+                {citationsMetric} {t.articleDetail.citations}
+              </span>
             </span>
           </div>
         </div>
 
         {/* Wide Panoramic Hero Graphic (Screen 3 Benchmark) */}
-        <div className="acad-article-hero-cover gradient-cs" aria-hidden="true">
+        <div className={`acad-article-hero-cover ${coverGradient}`} aria-hidden="true">
           <div className="acad-hero-cover-pattern" />
           <div className="acad-hero-cover-glow" />
           <div className="acad-hero-cover-badge">
