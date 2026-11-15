@@ -51,7 +51,7 @@ export function Navbar({ locale, siteName, userName }: NavbarProps) {
           <Link href={`/${locale}/authors`} className="acad-nav-link">
             {t.nav.authors}
           </Link>
-          <Link href={`/${locale}/#about`} className="acad-nav-link">
+          <Link href={`/${locale}/about`} className="acad-nav-link">
             {t.nav.about}
           </Link>
         </nav>
@@ -108,7 +108,7 @@ export function Navbar({ locale, siteName, userName }: NavbarProps) {
       {/* Search dropdown row if open */}
       {searchOpen && (
         <div className="acad-search-bar-dropdown">
-          <form action={`/${locale}/publications`} method="GET" className="acad-search-dropdown-form">
+          <form action={`/${locale}/search`} method="GET" className="acad-search-dropdown-form">
             <Search className="w-4 h-4 acad-search-icon" aria-hidden="true" />
             <input
               type="search"
@@ -140,7 +140,7 @@ export function Navbar({ locale, siteName, userName }: NavbarProps) {
             <Link href={`/${locale}/authors`} onClick={() => setMobileOpen(false)}>
               {t.nav.authors}
             </Link>
-            <Link href={`/${locale}/#about`} onClick={() => setMobileOpen(false)}>
+            <Link href={`/${locale}/about`} onClick={() => setMobileOpen(false)}>
               {t.nav.about}
             </Link>
             <div className="acad-mobile-actions">

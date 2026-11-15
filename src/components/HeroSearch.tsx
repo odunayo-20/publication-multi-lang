@@ -62,7 +62,7 @@ export function HeroSearch({ locale, stats }: HeroSearchProps) {
 
         {/* Central Search Form */}
         <div className="acad-search-box-wrapper">
-          <form action={`/${locale}/publications`} method="GET" className="acad-search-box">
+          <form action={`/${locale}/search`} method="GET" className="acad-search-box">
             {/* Scope select */}
             <div className="acad-search-scope">
               <select
@@ -107,7 +107,7 @@ export function HeroSearch({ locale, stats }: HeroSearchProps) {
               {trendingTags.map((tag) => (
                 <Link
                   key={tag.label}
-                  href={`/${locale}/publications?q=${encodeURIComponent(tag.q)}`}
+                  href={`/${locale}/search?q=${encodeURIComponent(tag.q)}`}
                   className="acad-trending-pill"
                 >
                   {tag.label}

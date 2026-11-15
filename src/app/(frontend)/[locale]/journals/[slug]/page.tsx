@@ -188,11 +188,11 @@ export default async function JournalDetailPage({ params }: Args) {
 
             {/* Actions */}
             <div className="acad-journal-hero-actions">
-              <Link href={`/${locale}/publications`} className="acad-btn-primary-lg">
+              <Link href={`/${locale}/submit`} className="acad-btn-primary-lg">
                 <FileCheck2 className="w-4 h-4 mr-1.5" />
                 <span>{t.journalDetail.submitManuscript}</span>
               </Link>
-              <Link href={`/${locale}/#about`} className="acad-btn-secondary-lg">
+              <Link href={`/${locale}/policies/author-guidelines`} className="acad-btn-secondary-lg">
                 <BookOpen className="w-4 h-4 mr-1.5" />
                 <span>{t.journalDetail.authorGuidelines}</span>
               </Link>

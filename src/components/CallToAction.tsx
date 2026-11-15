@@ -39,11 +39,11 @@ export function CallToAction({ locale }: CallToActionProps) {
 
             {/* Buttons */}
             <div className="acad-cta-buttons">
-              <Link href={`/${locale}/publications`} className="acad-btn-cta-primary">
+              <Link href={`/${locale}/submit`} className="acad-btn-cta-primary">
                 <span>{t.portal.cta.submit}</span>
                 <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </Link>
-              <Link href={`/${locale}/#about`} className="acad-btn-cta-secondary">
+              <Link href={`/${locale}/policies/author-guidelines`} className="acad-btn-cta-secondary">
                 <FileCheck2 className="w-4 h-4" aria-hidden="true" />
                 <span>{t.portal.cta.guidelines}</span>
               </Link>

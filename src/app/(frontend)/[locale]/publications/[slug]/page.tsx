@@ -166,7 +166,7 @@ export default async function PublicationDetailPage({ params }: Args) {
   const journalLink = matchedJournal
     ? `/${locale}/journals/${matchedJournal.slug}`
     : pub.venue
-      ? `/${locale}/publications?q=${encodeURIComponent(pub.venue)}`
+      ? `/${locale}/search?q=${encodeURIComponent(pub.venue)}`
       : null
 
   const jsonLd = {
@@ -299,7 +299,7 @@ export default async function PublicationDetailPage({ params }: Args) {
                 {keywords.map((kw) => (
                   <Link
                     key={kw}
-                    href={`/${locale}/publications?q=${encodeURIComponent(kw)}`}
+                    href={`/${locale}/search?q=${encodeURIComponent(kw)}`}
                     className="acad-keyword-pill"
                   >
                     {kw}

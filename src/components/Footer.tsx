@@ -59,7 +59,7 @@ export function Footer({ locale, siteName }: FooterProps) {
                 <Link href={`/${locale}/publications?type=preprint`}>Preprint Archives</Link>
               </li>
               <li>
-                <Link href={`/${locale}/#about`}>Featured Research Topics</Link>
+                <Link href={`/${locale}/about`}>Featured Research Topics</Link>
               </li>
             </ul>
           </div>
@@ -69,16 +69,16 @@ export function Footer({ locale, siteName }: FooterProps) {
             <h4 className="acad-footer-heading">For Authors & Editors</h4>
             <ul className="acad-footer-links">
               <li>
-                <Link href={`/${locale}/publications`}>Submit Manuscript</Link>
+                <Link href={`/${locale}/submit`}>Submit Manuscript</Link>
               </li>
               <li>
-                <Link href={`/${locale}/#about`}>Author Guidelines & Formatting</Link>
+                <Link href={`/${locale}/policies/author-guidelines`}>Author Guidelines & Formatting</Link>
               </li>
               <li>
-                <Link href={`/${locale}/#about`}>Peer Review Process</Link>
+                <Link href={`/${locale}/policies/peer-review`}>Peer Review Process</Link>
               </li>
               <li>
-                <Link href={`/${locale}/#about`}>Open Access Policy (CC-BY 4.0)</Link>
+                <Link href={`/${locale}/policies/open-access`}>Open Access Policy (CC-BY 4.0)</Link>
               </li>
               <li>
                 <Link href="/admin">Editorial Management Portal</Link>
@@ -91,19 +91,19 @@ export function Footer({ locale, siteName }: FooterProps) {
             <h4 className="acad-footer-heading">Governance & Ethics</h4>
             <ul className="acad-footer-links">
               <li>
-                <Link href={`/${locale}/#about`}>Publication Ethics & Integrity</Link>
+                <Link href={`/${locale}/policies/publication-ethics`}>Publication Ethics & Integrity</Link>
               </li>
               <li>
-                <Link href={`/${locale}/#about`}>Editorial Board</Link>
+                <Link href={`/${locale}/policies/editorial-board`}>Editorial Board</Link>
               </li>
               <li>
-                <Link href={`/${locale}/#about`}>Repository Preservation Policy</Link>
+                <Link href={`/${locale}/policies/preservation`}>Repository Preservation Policy</Link>
               </li>
               <li>
-                <Link href={`/${locale}/#about`}>Contact Editorial Office</Link>
+                <Link href={`/${locale}/policies/contact`}>Contact Editorial Office</Link>
               </li>
               <li>
-                <Link href={`/${locale}/#about`}>Terms & Privacy Policy</Link>
+                <Link href={`/${locale}/policies/terms-privacy`}>Terms & Privacy Policy</Link>
               </li>
             </ul>
           </div>

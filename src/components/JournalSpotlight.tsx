@@ -81,7 +81,7 @@ export function JournalSpotlight({ locale }: JournalSpotlightProps) {
               {/* Journal Information */}
               <div className="acad-journal-info">
                 <h3 className="acad-journal-name">
-                  <Link href={`/${locale}/publications?q=${encodeURIComponent(j.name)}`}>{j.name}</Link>
+                  <Link href={`/${locale}/search?q=${encodeURIComponent(j.name)}`}>{j.name}</Link>
                 </h3>
                 <p className="acad-journal-scope">{j.scope}</p>
               </div>
@@ -92,7 +92,7 @@ export function JournalSpotlight({ locale }: JournalSpotlightProps) {
                   <strong>{j.articles}</strong> {t.portal.journals.articlesCount}
                 </span>
                 <Link
-                  href={`/${locale}/publications?q=${encodeURIComponent(j.name)}`}
+                  href={`/${locale}/search?q=${encodeURIComponent(j.name)}`}
                   className="acad-btn-outline-sm"
                 >
                   <span>{t.portal.journals.viewJournal}</span>

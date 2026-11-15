@@ -34,7 +34,7 @@ export function SubjectTaxonomy({ locale }: SubjectTaxonomyProps) {
             return (
               <Link
                 key={d.id}
-                href={`/${locale}/publications?q=${encodeURIComponent(d.q)}`}
+                href={`/${locale}/search?q=${encodeURIComponent(d.q)}`}
                 className="acad-taxonomy-chip"
               >
                 <div className="acad-taxonomy-icon">
